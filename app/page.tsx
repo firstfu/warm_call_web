@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 
 export default function Home() {
   const [isVisible, setIsVisible] = useState(false)
+  const [isTrackingDownload, setIsTrackingDownload] = useState(false)
 
   useEffect(() => {
     setIsVisible(true)
@@ -26,6 +27,46 @@ export default function Home() {
 
     return () => observer.disconnect()
   }, [])
+
+  const trackDownload = async (platform: 'ios' | 'android') => {
+    if (isTrackingDownload) return
+    
+    setIsTrackingDownload(true)
+    
+    try {
+      const response = await fetch('/api/track-download', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ platform }),
+      })
+      
+      const data = await response.json()
+      
+      if (!response.ok) {
+        console.error('Failed to track download:', data.error)
+      } else {
+        console.log('Download tracked successfully:', data)
+      }
+    } catch (error) {
+      console.error('Error tracking download:', error)
+    } finally {
+      setIsTrackingDownload(false)
+    }
+  }
+
+  const handleAppStoreClick = () => {
+    trackDownload('ios')
+    // Add actual App Store URL when available
+    // window.open('https://apps.apple.com/app/your-app-id', '_blank')
+  }
+
+  const handleGooglePlayClick = () => {
+    trackDownload('android')
+    // Add actual Google Play URL when available
+    // window.open('https://play.google.com/store/apps/details?id=your.app.id', '_blank')
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-warm-100 to-white dark:from-gray-900 dark:to-black">
@@ -390,7 +431,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 italic">
-                "每天晚上10點的預約來電，已經成為我最期待的時刻。像是有個朋友每天都記得關心我。"
+                {"每天晚上10點的預約來電，已經成為我最期待的時刻。像是有個朋友每天都記得關心我。"}
               </p>
             </div>
 
@@ -408,7 +449,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 italic">
-                "期中考壓力很大的時候，媽媽角色的關懷來電真的讓我哭了，就像真的媽媽在身邊。"
+                {"期中考壓力很大的時候，媽媽角色的關懷來電真的讓我哭了，就像真的媽媽在身邊。"}
               </p>
             </div>
 
@@ -426,7 +467,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 italic">
-                "傾訴模式讓我可以說出心裡話，即使知道是AI，但那份被聆聽的感覺很真實。"
+                {"傾訴模式讓我可以說出心裡話，即使知道是AI，但那份被聆聽的感覺很真實。"}
               </p>
             </div>
           </div>
@@ -444,7 +485,10 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <button className="group relative px-6 py-3 bg-black text-white rounded-2xl font-medium shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden">
+            <button 
+              onClick={handleAppStoreClick}
+              disabled={isTrackingDownload}
+              className="group relative px-6 py-3 bg-black text-white rounded-2xl font-medium shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden disabled:opacity-75 disabled:cursor-not-allowed">
               <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black opacity-90"></div>
               <span className="relative flex items-center gap-3">
                 <svg className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
@@ -456,7 +500,10 @@ export default function Home() {
                 </div>
               </span>
             </button>
-            <button className="group relative px-6 py-3 bg-gradient-to-r from-warm-500 via-orange-500 to-yellow-500 text-white rounded-2xl font-medium shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden">
+            <button 
+              onClick={handleGooglePlayClick}
+              disabled={isTrackingDownload}
+              className="group relative px-6 py-3 bg-gradient-to-r from-warm-500 via-orange-500 to-yellow-500 text-white rounded-2xl font-medium shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden disabled:opacity-75 disabled:cursor-not-allowed">
               <div className="absolute inset-0 bg-gradient-to-r from-warm-600 via-orange-600 to-yellow-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <span className="relative flex items-center gap-3">
                 <svg className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
