@@ -1,10 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import WaitlistModal from './components/WaitlistModal'
 
 export default function Home() {
   const [isVisible, setIsVisible] = useState(false)
   const [isTrackingDownload, setIsTrackingDownload] = useState(false)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [selectedPlatform, setSelectedPlatform] = useState<'ios' | 'android'>('ios')
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
+  const [successMessageText, setSuccessMessageText] = useState('')
 
   useEffect(() => {
     setIsVisible(true)
@@ -28,7 +33,13 @@ export default function Home() {
     return () => observer.disconnect()
   }, [])
 
-  const trackDownload = async (platform: 'ios' | 'android') => {
+  const trackDownload = async (platform: 'ios' | 'android', action: 'click' | 'submit' | 'skip', userData?: {
+    name?: string
+    email?: string
+    phone?: string
+    interest?: string
+    newsletter?: boolean
+  }) => {
     if (isTrackingDownload) return
     
     setIsTrackingDownload(true)
@@ -39,7 +50,7 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ platform }),
+        body: JSON.stringify({ platform, action, userData }),
       })
       
       const data = await response.json()
@@ -57,19 +68,66 @@ export default function Home() {
   }
 
   const handleAppStoreClick = () => {
-    trackDownload('ios')
-    // Add actual App Store URL when available
-    // window.open('https://apps.apple.com/app/your-app-id', '_blank')
+    setSelectedPlatform('ios')
+    setModalOpen(true)
+    trackDownload('ios', 'click')
   }
 
   const handleGooglePlayClick = () => {
-    trackDownload('android')
-    // Add actual Google Play URL when available
-    // window.open('https://play.google.com/store/apps/details?id=your.app.id', '_blank')
+    setSelectedPlatform('android')
+    setModalOpen(true)
+    trackDownload('android', 'click')
+  }
+
+  const handleModalSubmit = async (userData: {
+    name?: string
+    email?: string
+    phone?: string
+    interest?: string
+    newsletter?: boolean
+  } | null, action: 'submit' | 'skip') => {
+    await trackDownload(selectedPlatform, action, userData || undefined)
+    setModalOpen(false)
+    
+    if (action === 'submit' && userData) {
+      setSuccessMessageText('感謝您的支持！我們將在 App 上線時第一時間通知您，並為您提供專屬優惠。')
+    } else {
+      setSuccessMessageText('App 即將上線，敬請期待！')
+    }
+    
+    setShowSuccessMessage(true)
+    setTimeout(() => setShowSuccessMessage(false), 5000)
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-warm-100 to-white dark:from-gray-900 dark:to-black">
+      {/* Waitlist Modal */}
+      <WaitlistModal 
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        platform={selectedPlatform}
+        onSubmit={handleModalSubmit}
+      />
+      
+      {/* Success Message */}
+      {showSuccessMessage && (
+        <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-top duration-500">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-4 max-w-sm">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-warm-400 to-purple-400 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  {successMessageText}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
