@@ -56,7 +56,14 @@ export default function Home() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="group relative px-8 py-4 bg-gradient-to-r from-warm-500 to-warm-600 text-white rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+            <button 
+              onClick={() => {
+                const element = document.getElementById('download');
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+              }}
+              className="group relative px-8 py-4 bg-gradient-to-r from-warm-500 to-warm-600 text-white rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
               <span className="flex items-center gap-2">
                 立即下載 App
                 <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -427,7 +434,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-4 bg-gradient-to-r from-warm-500 via-purple-500 to-warm-500 fade-in-section opacity-0 translate-y-10 transition-all duration-700">
+      <section id="download" className="py-24 px-4 bg-gradient-to-r from-warm-500 via-purple-500 to-warm-500 fade-in-section opacity-0 translate-y-10 transition-all duration-700">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
             現在就開始你的暖心旅程
@@ -437,20 +444,28 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <button className="group px-8 py-4 bg-white text-warm-600 rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200">
-              <span className="flex items-center justify-center gap-3">
-                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+            <button className="group relative px-6 py-3 bg-black text-white rounded-2xl font-medium shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black opacity-90"></div>
+              <span className="relative flex items-center gap-3">
+                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.09l-.05-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
                 </svg>
-                App Store
+                <div className="flex flex-col items-start">
+                  <span className="text-xs opacity-90">下載於</span>
+                  <span className="text-base font-semibold">App Store</span>
+                </div>
               </span>
             </button>
-            <button className="group px-8 py-4 bg-white text-warm-600 rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200">
-              <span className="flex items-center justify-center gap-3">
-                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M3 20.5v-17c0-.59.34-1.11.84-1.35l13.69 8.5c.65.4.65 1.29 0 1.7l-13.69 8.5c-.5.24-1.84.24-1.84-.35zm4.58-8.43L16 7v10l-8.42-4.93z"/>
+            <button className="group relative px-6 py-3 bg-gradient-to-r from-warm-500 via-orange-500 to-yellow-500 text-white rounded-2xl font-medium shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-warm-600 via-orange-600 to-yellow-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <span className="relative flex items-center gap-3">
+                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.802 8.99l-2.303 2.303-8.635-8.635z"/>
                 </svg>
-                Google Play
+                <div className="flex flex-col items-start">
+                  <span className="text-xs opacity-90">下載於</span>
+                  <span className="text-base font-semibold">Google Play</span>
+                </div>
               </span>
             </button>
           </div>
